@@ -8,8 +8,8 @@ workflows:
         distribution_type: ad_hoc
         bundle_identifier: io.codemagic.expoapp.mars
       vars:
-          XCODE_WORKSPACE: "ExpoApp.xcworkspace" # <-- Put the name of your Xcode workspace here
-          XCODE_SCHEME: "ExpoApp" # <-- Put the name of your Xcode scheme here
+          XCODE_WORKSPACE: "CodemagicExpo.xcworkspace" # <-- Put the name of your Xcode workspace here
+          XCODE_SCHEME: "CodemagicExpo" # <-- Put the name of your Xcode scheme here
           BUNDLE_ID: "io.codemagic.expoapp.mars" # <-- Put your Bundle Id here e.g com.domain.myapp
       xcode: 14.2
       cocoapods: default
