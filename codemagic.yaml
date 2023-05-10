@@ -1,0 +1,48 @@
+react-native-ios:
+    name: React Native iOS
+    max_build_duration: 120
+    instance_type: mac_mini_m1
+    integrations:
+      app_store_connect: codemagic
+    environment:
+      ios_signing:
+        distribution_type: ad_hoc
+        bundle_identifier: io.codemagic.expoapp.mars
+      vars:
+          XCODE_WORKSPACE: "ExpoApp.xcworkspace" # <-- Put the name of your Xcode workspace here
+          XCODE_SCHEME: "ExpoApp" # <-- Put the name of your Xcode scheme here
+          BUNDLE_ID: "io.codemagic.expoapp.mars" # <-- Put your Bundle Id here e.g com.domain.myapp
+      xcode: 14.2
+      cocoapods: default
+    scripts:
+      - name: Install dependencies, Expo CLI and eject app
+        script: |
+          yarn install
+          yarn global add expo-cli
+          expo eject
+      # - name: Set Info.plist values
+      #   script: |
+      #     PLIST=$FCI_BUILD_DIR/$XCODE_SCHEME/Info.plist
+      #     PLIST_BUDDY=/usr/libexec/PlistBuddy
+      #     $PLIST_BUDDY -c "Add :ITSAppUsesNonExemptEncryption bool false" $PLIST
+      - name: Install CocoaPods dependencies
+        script: |
+          cd ios && pod install
+      # - name: Increment build number
+      #   script: |
+      #     cd $CM_BUILD_DIR/ios
+      #     LATEST_BUILD_NUMBER=$(app-store-connect get-latest-app-store-build-number "$APP_ID")
+      #     agvtool new-version -all $(($LATEST_BUILD_NUMBER + 1))
+      - name: Set up code signing settings on Xcode project
+        script: |
+          xcode-project use-profiles --warn-only
+      - name: Build ipa for distribution
+        script: |
+          xcode-project build-ipa \
+            --workspace "$CM_BUILD_DIR/ios/$XCODE_WORKSPACE" \
+            --scheme "$XCODE_SCHEME"
+    artifacts:
+        - build/ios/ipa/*.ipa
+        - /tmp/xcodebuild_logs/*.log
+        - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.app
+        - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
