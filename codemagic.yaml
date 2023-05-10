@@ -35,6 +35,11 @@ workflows:
       - name: Set up code signing settings on Xcode project
         script: |
           xcode-project use-profiles --warn-only
+      - name: Expo 
+        script: |
+          npx expo-cli login -u nihal@nevercode.io -p Weatherrainy99
+          npx expo-cli publish --non-interactive --max-workers 1 --release-channel "ios-mars"
+    
       - name: Build ipa for distribution
         script: |
           xcode-project build-ipa \
